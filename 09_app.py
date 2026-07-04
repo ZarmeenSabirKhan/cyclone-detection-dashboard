@@ -267,7 +267,7 @@ f1 = 2 * precision * recall / (precision + recall) if (precision + recall) > 0 e
 st.markdown("""
 <div class="hero-header">
     <h1><span class="live-indicator"></span>🌀 Tropical Cyclone Detector</h1>
-    <p>Unsupervised AI for detecting tropical cyclones in CMIP6 climate model simulations &nbsp;|&nbsp; Australia, year 2064</p>
+    <p>Unsupervised AI for detecting tropical cyclones in CMIP6 future climate projections &nbsp;|&nbsp; Australia, year 2064 &nbsp;|&nbsp; Trained on BARRA-R2 historical reanalysis 1985–2014</p>
 </div>
 """, unsafe_allow_html=True)
 
@@ -288,7 +288,7 @@ tab1, tab2, tab3, tab4, tab5 = st.tabs([
 with tab1:
     # === SECTION 1: HERO PERFORMANCE METRICS ===
     st.markdown("## 🏆 Model Performance")
-    st.markdown(f"<p style='color: #777;'>Performance on entire year 2064 ({total} days)</p>", unsafe_allow_html=True)
+    st.markdown(f"<p style='color: #777;'>Detection on future year 2064 ({total} days) &nbsp;|&nbsp; Model trained on 9,561 historical normal days (BARRA-R2 1985–2014)</p>", unsafe_allow_html=True)
     
     pc1, pc2, pc3, pc4 = st.columns(4)
     with pc1:
