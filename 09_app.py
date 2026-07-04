@@ -459,23 +459,52 @@ with tab1:
 # TAB 2: SINGLE DAY ANALYSIS
 # ============================================================
 with tab2:
+    if 'day' not in st.session_state:
+        st.session_state.day = 68
+
+    # Two sliders (sidebar + main tab) stay in sync via these callbacks.
+    # Setting the OTHER widget's session_state key inside a callback is safe
+    # (callbacks run before the widgets are re-instantiated on rerun) -
+    # same pattern used to fix the Live Testing button earlier.
+    def _sync_from_sidebar():
+        val = st.session_state.slider_sidebar
+        st.session_state.day = val
+        st.session_state.slider_main = val
+
+    def _sync_from_main():
+        val = st.session_state.slider_main
+        st.session_state.day = val
+        st.session_state.slider_sidebar = val
+
     st.sidebar.header("🎛️ Day Selector")
     st.sidebar.markdown("**Quick jumps:**")
     qc1, qc2 = st.sidebar.columns(2)
     if qc1.button("🌀 Day 68\nTop cyclone"):
         st.session_state.day = 68
+        st.session_state.slider_sidebar = 68
+        st.session_state.slider_main = 68
     if qc2.button("❄️ Day 209\nWinter day"):
         st.session_state.day = 209
+        st.session_state.slider_sidebar = 209
+        st.session_state.slider_main = 209
     qc3, qc4 = st.sidebar.columns(2)
     if qc3.button("🌧 Day 100\nApril cyclone"):
         st.session_state.day = 100
+        st.session_state.slider_sidebar = 100
+        st.session_state.slider_main = 100
     if qc4.button("☀️ Day 180\nMid-year"):
         st.session_state.day = 180
-    
-    if 'day' not in st.session_state:
-        st.session_state.day = 68
-    
-    day_idx = st.sidebar.slider("Day of Year", 1, 365, st.session_state.day, key='slider')
+        st.session_state.slider_sidebar = 180
+        st.session_state.slider_main = 180
+
+    st.sidebar.slider("Day of Year", 1, 365, st.session_state.day,
+                       key='slider_sidebar', on_change=_sync_from_sidebar)
+
+    # Same slider, visible directly in the tab too - so it's not hidden
+    # if the sidebar is collapsed (e.g. on mobile / narrow screens).
+    day_idx = st.slider("📅 Day of Year", 1, 365, st.session_state.day,
+                         key='slider_main', on_change=_sync_from_main)
+
     day_idx_0 = day_idx - 1
     selected_date = date(2064, 1, 1) + timedelta(days=day_idx_0)
     error = errors[day_idx_0]
