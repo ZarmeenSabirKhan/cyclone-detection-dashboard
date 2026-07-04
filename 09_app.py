@@ -755,6 +755,20 @@ with tab5:
                      'Solar Radiation (rsds)', 'Wind Speed (sfcWind)']
         units = ['°C', 'mm/day', '%', 'W/m²', 'm/s']
 
+        # NOTE: sliders below are created with key=f"sim_{i}". Streamlit does not allow
+        # writing to st.session_state[key] after a widget with that key has already been
+        # instantiated in the same script run. So the "extreme scenario" button uses an
+        # on_click callback instead - callbacks run BEFORE the script reruns/re-renders
+        # the sliders, so setting session_state there is safe.
+        def _set_extreme_scenario():
+            for i in range(5):
+                lo, hi = float(PHYSICAL_BOUNDS[i, 0]), float(PHYSICAL_BOUNDS[i, 1])
+                st.session_state[f"sim_{i}"] = hi if i in (1, 4) else (lo + 0.5 * (hi - lo))
+
+        c1, c2 = st.columns([1, 2])
+        with c1:
+            st.button("⚡ Try an extreme cyclone-like scenario", on_click=_set_extreme_scenario)
+
         cols = st.columns(5)
         slider_vals = []
         for i, (col, name, unit) in enumerate(zip(cols, var_names, units)):
@@ -763,14 +777,6 @@ with tab5:
             with col:
                 v = st.slider(f"{name}\n({unit})", lo, hi, default, key=f"sim_{i}")
                 slider_vals.append(v)
-
-        c1, c2 = st.columns([1, 2])
-        with c1:
-            if st.button("⚡ Try an extreme cyclone-like scenario"):
-                for i in range(5):
-                    lo, hi = float(PHYSICAL_BOUNDS[i, 0]), float(PHYSICAL_BOUNDS[i, 1])
-                    st.session_state[f"sim_{i}"] = hi if i in (1, 4) else (lo + 0.5 * (hi - lo))
-                st.rerun()
 
         H, W = data.shape[2], data.shape[3]
         field = np.zeros((5, H, W), dtype=np.float32)
